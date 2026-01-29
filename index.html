@@ -199,6 +199,85 @@
       transition: all 0.2s;
     }
     .add-row-btn:hover { background: #f5f5f7; border-color: #0071e3; }
+
+    /* Week Button */
+    .week-btn {
+      background: #34c759;
+      color: white;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 980px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .week-btn:hover { background: #2db84d; transform: scale(1.05); }
+
+    /* Week Plan Modal */
+    .week-plan {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .week-plan.active { display: flex; }
+    .week-plan-content {
+      background: white;
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .week-plan-header {
+      padding: 20px;
+      border-bottom: 1px solid #e5e5e5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .week-plan-header h2 { margin: 0; font-size: 1.25rem; }
+    .week-plan-body { padding: 0; }
+    .week-day {
+      padding: 16px 20px;
+      border-bottom: 1px solid #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .week-day:hover { background: #f5f5f7; }
+    .week-day:last-child { border-bottom: none; }
+    .week-day-name {
+      font-weight: 600;
+      color: #86868b;
+      font-size: 0.875rem;
+      min-width: 80px;
+    }
+    .week-day-recipe {
+      flex: 1;
+      font-weight: 500;
+      color: #1d1d1f;
+    }
+    .week-day-time {
+      font-size: 0.875rem;
+      color: #86868b;
+    }
+    .week-plan-footer {
+      padding: 16px 20px;
+      border-top: 1px solid #e5e5e5;
+      display: flex;
+      gap: 12px;
+    }
+    .week-plan-footer button { flex: 1; }
   </style>
 </head>
 <body>
@@ -206,6 +285,7 @@
     <div class="container">
       <div class="header-content">
         <a href="index.html" class="site-title" onclick="showHome(); return false;">Rezepte</a>
+        <button class="week-btn" onclick="showWeekPlan()">7 Tage</button>
         <div class="header-actions">
           <div class="search-wrapper">
             <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -402,6 +482,23 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal()">Abbrechen</button>
         <button class="btn btn-blue" onclick="saveRecipe()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Week Plan Modal -->
+  <div class="week-plan" id="week-plan-modal">
+    <div class="week-plan-content">
+      <div class="week-plan-header">
+        <h2>Wochenplan</h2>
+        <button class="modal-close" onclick="closeWeekPlan()">&times;</button>
+      </div>
+      <div class="week-plan-body" id="week-plan-body">
+        <!-- Days will be inserted here -->
+      </div>
+      <div class="week-plan-footer">
+        <button class="btn btn-secondary" onclick="generateWeekPlan()">Neu würfeln</button>
+        <button class="btn btn-blue" onclick="printWeekPlan()">Drucken</button>
       </div>
     </div>
   </div>
@@ -963,6 +1060,86 @@
         showNotification('Import fehlgeschlagen!', 'error');
       }
     }
+
+    // Week Plan Functions
+    const wochentage = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag'];
+    let weekPlanRecipes = [];
+
+    function showWeekPlan() {
+      if (rezepte.length < 7) {
+        alert('Es werden mindestens 7 Rezepte benötigt für einen Wochenplan.');
+        return;
+      }
+      generateWeekPlan();
+      document.getElementById('week-plan-modal').classList.add('active');
+    }
+
+    function closeWeekPlan() {
+      document.getElementById('week-plan-modal').classList.remove('active');
+    }
+
+    function generateWeekPlan() {
+      // Shuffle and pick 7 random recipes
+      const shuffled = [...rezepte].sort(() => Math.random() - 0.5);
+      weekPlanRecipes = shuffled.slice(0, 7);
+
+      renderWeekPlan();
+    }
+
+    function renderWeekPlan() {
+      const body = document.getElementById('week-plan-body');
+      body.innerHTML = wochentage.map((tag, i) => {
+        const recipe = weekPlanRecipes[i];
+        return `
+          <div class="week-day" onclick="showRecipe('${recipe.id}'); closeWeekPlan();">
+            <span class="week-day-name">${tag}</span>
+            <span class="week-day-recipe">${recipe.title}</span>
+            <span class="week-day-time">${recipe.zeit || ''}</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function printWeekPlan() {
+      const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>Wochenplan</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; padding: 40px; max-width: 600px; }
+            h1 { font-size: 24px; margin-bottom: 24px; }
+            .day { padding: 16px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+            .day-name { font-weight: 600; color: #666; width: 100px; }
+            .day-recipe { flex: 1; }
+            .day-time { color: #666; }
+          </style>
+        </head>
+        <body>
+          <h1>Wochenplan</h1>
+          ${wochentage.map((tag, i) => `
+            <div class="day">
+              <span class="day-name">${tag}</span>
+              <span class="day-recipe">${weekPlanRecipes[i].title}</span>
+              <span class="day-time">${weekPlanRecipes[i].zeit || ''}</span>
+            </div>
+          `).join('')}
+        </body>
+        </html>
+      `;
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.print();
+    }
+
+    // Close week plan on overlay click
+    document.getElementById('week-plan-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeWeekPlan();
+      }
+    });
 
     // Initialize
     loadRecipes();
