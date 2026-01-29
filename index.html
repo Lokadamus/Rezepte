@@ -446,8 +446,8 @@
 
           <div class="form-group">
             <label>Bild (optional)</label>
-            <input type="text" id="form-bild" placeholder="rezeptname.jpg">
-            <p class="form-hint">Bild in "assets/images/" speichern, dann nur Dateiname eingeben (z.B. lasagne.jpg)</p>
+            <input type="text" id="form-bild" placeholder="https://... oder rezeptname.jpg">
+            <p class="form-hint">Entweder vollständige URL (https://...) oder Dateiname aus assets/images/</p>
           </div>
 
           <div class="form-group">
@@ -802,11 +802,12 @@
       document.getElementById('form-zeit').value = currentRecipe.zeit || '';
       document.getElementById('form-portionen').value = currentRecipe.portionen || '';
       document.getElementById('form-beschreibung').value = currentRecipe.beschreibung || '';
-      // Show only filename for image
+      // Show image path - keep URLs as-is, show only filename for local images
       let bildValue = currentRecipe.bild || '';
       if (bildValue.startsWith('assets/images/')) {
         bildValue = bildValue.replace('assets/images/', '');
       }
+      // Keep full URLs unchanged
       document.getElementById('form-bild').value = bildValue;
       document.getElementById('form-tipps').value = currentRecipe.tipps || '';
 
@@ -926,8 +927,11 @@
 
       // Handle image path
       let bild = document.getElementById('form-bild').value.trim();
-      if (bild && !bild.includes('/')) {
-        bild = 'assets/images/' + bild;
+      if (bild && !bild.startsWith('http://') && !bild.startsWith('https://')) {
+        // Local file - add assets/images/ prefix if not already there
+        if (!bild.startsWith('assets/')) {
+          bild = 'assets/images/' + bild;
+        }
       }
 
       // Create recipe object
