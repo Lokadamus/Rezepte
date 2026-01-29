@@ -1,0 +1,337 @@
+[
+  {
+    "id": "spaghetti-bolognese",
+    "title": "Spaghetti Bolognese",
+    "kategorie": "Hauptspeisen",
+    "bild": "assets/images/spaghetti-bolognese.jpg",
+    "zeit": "45 Min",
+    "portionen": "4",
+    "schwierigkeit": "Einfach",
+    "beschreibung": "Der italienische Klassiker - herzhaft, aromatisch und immer ein Genuss.",
+    "zutaten": [
+      {
+        "name": "Spaghetti",
+        "menge": "500g"
+      },
+      {
+        "name": "Rinderhackfleisch",
+        "menge": "400g"
+      },
+      {
+        "name": "Zwiebeln",
+        "menge": "2 Stück"
+      },
+      {
+        "name": "Knoblauchzehen",
+        "menge": "2 Stück"
+      },
+      {
+        "name": "Karotten",
+        "menge": "2 Stück"
+      },
+      {
+        "name": "Staudensellerie",
+        "menge": "2 Stangen"
+      },
+      {
+        "name": "Passierte Tomaten",
+        "menge": "400ml"
+      },
+      {
+        "name": "Tomatenmark",
+        "menge": "2 EL"
+      },
+      {
+        "name": "Rotwein (optional)",
+        "menge": "100ml"
+      },
+      {
+        "name": "Olivenöl",
+        "menge": "3 EL"
+      },
+      {
+        "name": "Salz",
+        "menge": "nach Geschmack"
+      },
+      {
+        "name": "Pfeffer",
+        "menge": "nach Geschmack"
+      },
+      {
+        "name": "Oregano",
+        "menge": "1 TL"
+      },
+      {
+        "name": "Parmesan",
+        "menge": "zum Servieren"
+      }
+    ],
+    "zubereitung": [
+      "Zwiebeln, Knoblauch, Karotten und Sellerie fein würfeln.",
+      "Olivenöl in einem großen Topf erhitzen und das Hackfleisch krümelig anbraten. Herausnehmen und beiseite stellen.",
+      "Im gleichen Topf das Gemüse bei mittlerer Hitze 5-7 Minuten anschwitzen bis es weich ist.",
+      "Das Hackfleisch zurück in den Topf geben und Tomatenmark hinzufügen. Kurz mitrösten.",
+      "Mit Rotwein ablöschen (falls verwendet) und die passierten Tomaten hinzugeben.",
+      "Mit Salz, Pfeffer und Oregano würzen. Bei niedriger Hitze 20-25 Minuten köcheln lassen.",
+      "In der Zwischenzeit die Spaghetti nach Packungsanweisung in Salzwasser kochen.",
+      "Spaghetti abgießen und mit der Bolognese-Sauce servieren. Mit frisch geriebenem Parmesan bestreuen."
+    ],
+    "tipps": "Die Sauce schmeckt noch besser, wenn sie länger köchelt. Für eine cremigere Variante einen Schuss Sahne oder etwas Milch am Ende hinzufügen."
+  },
+  {
+    "id": "bruschetta",
+    "title": "Bruschetta",
+    "kategorie": "Vorspeisen",
+    "bild": "assets/images/bruschetta.jpg",
+    "zeit": "15 Min",
+    "portionen": "4",
+    "schwierigkeit": "Einfach",
+    "beschreibung": "Knusprig geröstetes Brot mit frischen Tomaten und Basilikum - perfekt als Vorspeise.",
+    "zutaten": [
+      {
+        "name": "Ciabatta oder Baguette",
+        "menge": "1 Stück"
+      },
+      {
+        "name": "Reife Tomaten",
+        "menge": "4 Stück"
+      },
+      {
+        "name": "Frischer Basilikum",
+        "menge": "1 Bund"
+      },
+      {
+        "name": "Knoblauchzehen",
+        "menge": "2 Stück"
+      },
+      {
+        "name": "Olivenöl extra vergine",
+        "menge": "4 EL"
+      },
+      {
+        "name": "Balsamico-Essig",
+        "menge": "1 EL"
+      },
+      {
+        "name": "Meersalz",
+        "menge": "nach Geschmack"
+      },
+      {
+        "name": "Schwarzer Pfeffer",
+        "menge": "nach Geschmack"
+      }
+    ],
+    "zubereitung": [
+      "Tomaten waschen, Strunk entfernen und in kleine Würfel schneiden. In eine Schüssel geben.",
+      "Basilikum waschen, trocken tupfen und in feine Streifen schneiden. Zu den Tomaten geben.",
+      "Olivenöl und Balsamico hinzufügen, mit Salz und Pfeffer abschmecken. Gut vermischen.",
+      "Das Brot in etwa 2 cm dicke Scheiben schneiden.",
+      "Brotscheiben im Ofen bei 200°C oder im Toaster goldbraun rösten.",
+      "Die warmen Brotscheiben mit einer halbierten Knoblauchzehe einreiben.",
+      "Die Tomatenmischung großzügig auf den Brotscheiben verteilen.",
+      "Sofort servieren, solange das Brot noch warm und knusprig ist."
+    ],
+    "tipps": "Für extra Geschmack die Brotscheiben vor dem Rösten leicht mit Olivenöl beträufeln."
+  },
+  {
+    "id": "tiramisu",
+    "title": "Tiramisu",
+    "kategorie": "Desserts",
+    "bild": "assets/images/tiramisu.jpg",
+    "zeit": "30 Min + Kühlzeit",
+    "portionen": "6",
+    "schwierigkeit": "Mittel",
+    "beschreibung": "Das italienische Dessert-Highlight - cremig, kaffeegetränkt und unwiderstehlich.",
+    "zutaten": [
+      {
+        "name": "Mascarpone",
+        "menge": "500g"
+      },
+      {
+        "name": "Eigelb",
+        "menge": "4 Stück"
+      },
+      {
+        "name": "Eiweiß",
+        "menge": "4 Stück"
+      },
+      {
+        "name": "Zucker",
+        "menge": "100g"
+      },
+      {
+        "name": "Löffelbiskuits",
+        "menge": "200g"
+      },
+      {
+        "name": "Starker Espresso (abgekühlt)",
+        "menge": "300ml"
+      },
+      {
+        "name": "Amaretto (optional)",
+        "menge": "3 EL"
+      },
+      {
+        "name": "Kakaopulver",
+        "menge": "zum Bestäuben"
+      },
+      {
+        "name": "Vanilleextrakt",
+        "menge": "1 TL"
+      }
+    ],
+    "zubereitung": [
+      "Espresso kochen und vollständig abkühlen lassen. Optional Amaretto hinzufügen.",
+      "Eigelb mit dem Zucker schaumig schlagen bis die Masse hellgelb und cremig ist.",
+      "Mascarpone und Vanilleextrakt zur Eigelbmasse geben und glatt rühren.",
+      "Eiweiß mit einer Prise Salz steif schlagen und vorsichtig unter die Mascarponecreme heben.",
+      "Die Löffelbiskuits kurz (nicht zu lange!) in den Espresso tauchen und den Boden einer Form damit auslegen.",
+      "Die Hälfte der Mascarponecreme gleichmäßig darauf verteilen.",
+      "Eine zweite Schicht getränkte Löffelbiskuits darauflegen.",
+      "Mit der restlichen Creme abschließen und glatt streichen.",
+      "Mindestens 4 Stunden, besser über Nacht, im Kühlschrank durchziehen lassen.",
+      "Vor dem Servieren großzügig mit Kakaopulver bestäuben."
+    ],
+    "tipps": "Das Tiramisu schmeckt am besten, wenn es über Nacht durchziehen konnte. Für eine alkoholfreie Version den Amaretto einfach weglassen."
+  },
+  {
+    "id": "kaesespaetzle",
+    "title": "Käsespätzle",
+    "kategorie": "Hauptspeisen",
+    "bild": "assets/images/kaesespaetzle.jpg",
+    "zeit": "40 Min",
+    "portionen": "4",
+    "schwierigkeit": "Einfach",
+    "beschreibung": "Schwäbischer Klassiker - selbstgemachte Spätzle mit viel Käse und knusprigen Röstzwiebeln.",
+    "zutaten": [
+      {
+        "name": "Mehl",
+        "menge": "400g"
+      },
+      {
+        "name": "Eier",
+        "menge": "4 Stück"
+      },
+      {
+        "name": "Wasser (lauwarm)",
+        "menge": "150ml"
+      },
+      {
+        "name": "Salz",
+        "menge": "1 TL"
+      },
+      {
+        "name": "Bergkäse (gerieben)",
+        "menge": "200g"
+      },
+      {
+        "name": "Emmentaler (gerieben)",
+        "menge": "100g"
+      },
+      {
+        "name": "Zwiebeln",
+        "menge": "3 große"
+      },
+      {
+        "name": "Butter",
+        "menge": "50g"
+      },
+      {
+        "name": "Pfeffer",
+        "menge": "nach Geschmack"
+      },
+      {
+        "name": "Schnittlauch",
+        "menge": "zum Garnieren"
+      }
+    ],
+    "zubereitung": [
+      "Mehl in eine große Schüssel geben. Eier, Wasser und Salz hinzufügen.",
+      "Mit einem Kochlöffel kräftig schlagen bis der Teig Blasen wirft und zäh vom Löffel fällt. 10 Minuten ruhen lassen.",
+      "Zwiebeln in dünne Ringe schneiden. Butter in einer Pfanne erhitzen und die Zwiebeln bei mittlerer Hitze goldbraun rösten. Beiseite stellen.",
+      "Einen großen Topf mit Salzwasser zum Kochen bringen.",
+      "Den Teig portionsweise durch ein Spätzlesieb oder vom Brett ins kochende Wasser schaben.",
+      "Wenn die Spätzle an der Oberfläche schwimmen, mit einer Schaumkelle herausnehmen.",
+      "In einer ofenfesten Form abwechselnd Spätzle und geriebenen Käse schichten. Mit Käse abschließen.",
+      "Im vorgeheizten Ofen bei 180°C etwa 10 Minuten überbacken bis der Käse geschmolzen ist.",
+      "Mit den Röstzwiebeln toppen und mit Schnittlauch garnieren. Sofort servieren."
+    ],
+    "tipps": "Dazu passt ein frischer grüner Salat. Wer mag, kann auch Speckwürfel zu den Röstzwiebeln geben."
+  },
+  {
+    "id": "gulaschsuppe",
+    "title": "Gulaschsuppe",
+    "kategorie": "Vorspeisen",
+    "bild": "assets/images/gulaschsuppe.jpg",
+    "zeit": "90 Min",
+    "portionen": "6",
+    "schwierigkeit": "Einfach",
+    "beschreibung": "Deftige ungarische Gulaschsuppe - perfekt für kalte Tage.",
+    "zutaten": [
+      {
+        "name": "Rindfleisch (Schulter)",
+        "menge": "500g"
+      },
+      {
+        "name": "Zwiebeln",
+        "menge": "3 große"
+      },
+      {
+        "name": "Paprikapulver (edelsüß)",
+        "menge": "3 EL"
+      },
+      {
+        "name": "Tomatenmark",
+        "menge": "2 EL"
+      },
+      {
+        "name": "Kartoffeln",
+        "menge": "400g"
+      },
+      {
+        "name": "Paprika (rot)",
+        "menge": "2 Stück"
+      },
+      {
+        "name": "Knoblauchzehen",
+        "menge": "3 Stück"
+      },
+      {
+        "name": "Rinderbrühe",
+        "menge": "1.5 Liter"
+      },
+      {
+        "name": "Kümmel",
+        "menge": "1 TL"
+      },
+      {
+        "name": "Majoran",
+        "menge": "1 TL"
+      },
+      {
+        "name": "Öl",
+        "menge": "3 EL"
+      },
+      {
+        "name": "Salz und Pfeffer",
+        "menge": "nach Geschmack"
+      },
+      {
+        "name": "Saure Sahne",
+        "menge": "zum Servieren"
+      }
+    ],
+    "zubereitung": [
+      "Das Rindfleisch in 2 cm große Würfel schneiden. Zwiebeln fein würfeln.",
+      "Öl in einem großen Topf erhitzen. Das Fleisch portionsweise scharf anbraten und herausnehmen.",
+      "Im gleichen Topf die Zwiebeln glasig dünsten.",
+      "Vom Herd nehmen, Paprikapulver einrühren (nicht anbrennen lassen!) und Tomatenmark hinzufügen.",
+      "Das Fleisch zurückgeben, Knoblauch (gepresst), Kümmel und Majoran hinzufügen.",
+      "Mit der Rinderbrühe aufgießen und bei niedriger Hitze 45 Minuten köcheln lassen.",
+      "Kartoffeln schälen und würfeln, Paprika in Streifen schneiden. Beides zur Suppe geben.",
+      "Weitere 25-30 Minuten köcheln bis Fleisch und Kartoffeln weich sind.",
+      "Mit Salz und Pfeffer abschmecken. Mit einem Klecks saurer Sahne servieren."
+    ],
+    "tipps": "Am nächsten Tag aufgewärmt schmeckt die Suppe noch besser! Dazu passt frisches Bauernbrot."
+  }
+]
