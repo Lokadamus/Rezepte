@@ -82,11 +82,18 @@ Ruby-Version auf dem Mac war zu alt (2.6), Upgrade war kompliziert. Pure HTML/JS
 Rezepte sollen von überall zugänglich sein und nach Refresh erhalten bleiben.
 
 ### Warum kein Firebase Storage?
-Benötigt Blaze-Tarif (Kreditkarte). Stattdessen: externe Bild-URLs oder GitHub.
+Benötigt Blaze-Tarif (Kreditkarte). Stattdessen: ImgBB für Uploads.
+
+### Bild-Upload mit ImgBB
+- **API-Key:** 31955502dda578a20355e36b06d783d1
+- Kostenlos, unbegrenzt
+- Upload direkt vom Smartphone möglich
+- URL wird automatisch ins Formular eingefügt
 
 ### Bilder-Workflow
-- **Option A:** Bild auf GitHub in `assets/images/` hochladen, dann nur Dateiname eingeben (z.B. `lasagne.jpg`)
-- **Option B:** Bild auf Google Fotos/Imgur hochladen, volle URL einfügen
+- **Option A (empfohlen):** "Foto wählen" Button im Formular - lädt direkt zu ImgBB hoch
+- **Option B:** Bild auf GitHub in `assets/images/` hochladen, dann nur Dateiname eingeben
+- **Option C:** Externe URL manuell einfügen
 
 ### iCloud-Links funktionieren NICHT
 iCloud-Share-Links sind keine direkten Bild-URLs, sondern Weiterleitungen zu einer Sharing-Seite.
