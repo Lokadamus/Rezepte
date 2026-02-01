@@ -379,13 +379,7 @@
     <div class="login-box">
       <h1>Pichlhofers Rezepte</h1>
       <form onsubmit="handleLogin(event)">
-        <select id="login-user" required>
-          <option value="">Benutzer wählen...</option>
-          <option value="Sven">Sven</option>
-          <option value="Christa">Christa</option>
-          <option value="Marc">Marc</option>
-          <option value="Markus">Markus</option>
-        </select>
+        <input type="text" id="login-user" placeholder="Benutzername" required>
         <input type="password" id="login-password" placeholder="Passwort" required>
         <button type="submit" class="btn-primary">Anmelden</button>
         <p id="login-error" class="login-error"></p>
@@ -659,7 +653,7 @@
       const password = document.getElementById('login-password').value;
       const errorEl = document.getElementById('login-error');
 
-      if (VALID_USERS.includes(user) && password === VALID_PASSWORD) {
+      if (VALID_USERS.map(u => u.toLowerCase()).includes(user.toLowerCase()) && password === VALID_PASSWORD) {
         sessionStorage.setItem('rezepte-auth', user);
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('app-container').style.display = 'block';
