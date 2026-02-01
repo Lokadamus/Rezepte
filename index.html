@@ -37,6 +37,70 @@
     if (window.onFirebaseReady) window.onFirebaseReady();
   </script>
   <style>
+    /* Login Screen */
+    .login-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+    .login-screen.hidden { display: none; }
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      width: 100%;
+      max-width: 340px;
+      text-align: center;
+    }
+    .login-box h1 {
+      font-size: 24px;
+      margin-bottom: 30px;
+      color: #1d1d1f;
+    }
+    .login-box select,
+    .login-box input {
+      width: 100%;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      border: 1px solid #d2d2d7;
+      border-radius: 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+    .login-box select:focus,
+    .login-box input:focus {
+      outline: none;
+      border-color: #0071e3;
+    }
+    .login-box .btn-primary {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+    }
+    .login-error {
+      color: #ff3b30;
+      font-size: 14px;
+      margin-top: 16px;
+      min-height: 20px;
+    }
+    .logout-btn {
+      background: none;
+      border: none;
+      color: #86868b;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 8px 12px;
+    }
+    .logout-btn:hover { color: #1d1d1f; }
+
     /* Modal Styles */
     .modal-overlay {
       display: none;
@@ -310,6 +374,27 @@
   </style>
 </head>
 <body>
+  <!-- Login Screen -->
+  <div id="login-screen" class="login-screen">
+    <div class="login-box">
+      <h1>Pichlhofers Rezepte</h1>
+      <form onsubmit="handleLogin(event)">
+        <select id="login-user" required>
+          <option value="">Benutzer wählen...</option>
+          <option value="Sven">Sven</option>
+          <option value="Christa">Christa</option>
+          <option value="Marc">Marc</option>
+          <option value="Markus">Markus</option>
+        </select>
+        <input type="password" id="login-password" placeholder="Passwort" required>
+        <button type="submit" class="btn-primary">Anmelden</button>
+        <p id="login-error" class="login-error"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- App Container (hidden until login) -->
+  <div id="app-container" style="display: none;">
   <header class="site-header">
     <div class="container">
       <div class="header-content">
@@ -332,6 +417,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
             </svg>
           </button>
+          <button class="logout-btn" onclick="handleLogout()" id="logout-btn">Abmelden</button>
         </div>
       </div>
     </div>
@@ -553,6 +639,46 @@
   </footer>
 
   <script>
+    // Authentication
+    const VALID_USERS = ['Sven', 'Christa', 'Marc', 'Markus'];
+    const VALID_PASSWORD = 'Duffduff133!';
+
+    function checkAuth() {
+      const loggedIn = sessionStorage.getItem('rezepte-auth');
+      if (loggedIn) {
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').style.display = 'block';
+        return true;
+      }
+      return false;
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('login-user').value;
+      const password = document.getElementById('login-password').value;
+      const errorEl = document.getElementById('login-error');
+
+      if (VALID_USERS.includes(user) && password === VALID_PASSWORD) {
+        sessionStorage.setItem('rezepte-auth', user);
+        document.getElementById('login-screen').classList.add('hidden');
+        document.getElementById('app-container').style.display = 'block';
+        errorEl.textContent = '';
+      } else {
+        errorEl.textContent = 'Falsches Passwort!';
+      }
+    }
+
+    function handleLogout() {
+      sessionStorage.removeItem('rezepte-auth');
+      document.getElementById('login-screen').classList.remove('hidden');
+      document.getElementById('app-container').style.display = 'none';
+      document.getElementById('login-password').value = '';
+    }
+
+    // Check auth on page load
+    checkAuth();
+
     let rezepte = [];
     let currentRecipe = null;
 
@@ -1266,5 +1392,6 @@
     // Initialize
     loadRecipes();
   </script>
+  </div><!-- End app-container -->
 </body>
 </html>
