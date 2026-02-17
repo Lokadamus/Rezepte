@@ -1461,16 +1461,45 @@
       errorEl.style.display = 'none';
 
       try {
-        // Fetch via CORS proxy
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
-        const response = await fetch(proxyUrl);
+        // Try multiple CORS proxies as fallback
+        const corsProxies = [
+          (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+          (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+          (url) => `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+        ];
 
-        if (!response.ok) {
-          throw new Error('Fehler beim Abrufen der Seite.');
+        let html = null;
+        let lastError = null;
+
+        for (const proxyFn of corsProxies) {
+          try {
+            const proxyUrl = proxyFn(url);
+            const response = await fetch(proxyUrl, {
+              headers: {
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+              }
+            });
+
+            if (response.ok) {
+              const text = await response.text();
+              // Check if response is JSON (allorigins format) or raw HTML
+              if (text.startsWith('{') && text.includes('"contents"')) {
+                const data = JSON.parse(text);
+                html = data.contents;
+              } else {
+                html = text;
+              }
+              break;
+            }
+          } catch (e) {
+            lastError = e;
+            console.warn('Proxy failed, trying next...', e);
+          }
         }
 
-        const data = await response.json();
-        const html = data.contents;
+        if (!html) {
+          throw new Error(lastError?.message || 'Fehler beim Abrufen der Seite. Alle Proxies fehlgeschlagen.');
+        }
 
         // Parse recipe from HTML
         const recipe = parseRecipeFromHTML(html, url);
