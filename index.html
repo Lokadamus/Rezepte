@@ -371,6 +371,17 @@
       gap: 12px;
     }
     .week-plan-footer button { flex: 1; }
+
+    /* URL Import Error */
+    .url-import-error {
+      color: #ff3b30;
+      font-size: 0.875rem;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #fff5f5;
+      border-radius: 8px;
+      border: 1px solid #ffcccc;
+    }
   </style>
 </head>
 <body>
@@ -409,6 +420,11 @@
           <button class="btn-icon" onclick="importFromJSON()" title="Aus JSON importieren" id="import-btn">
             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+            </svg>
+          </button>
+          <button class="btn-icon" onclick="openUrlImportModal()" title="Von URL importieren" id="url-import-btn">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
             </svg>
           </button>
           <button class="logout-btn" onclick="handleLogout()" id="logout-btn">Abmelden</button>
@@ -605,6 +621,28 @@
       <div class="modal-footer">
         <button class="btn btn-secondary" onclick="closeModal()">Abbrechen</button>
         <button class="btn btn-blue" onclick="saveRecipe()">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- URL Import Modal -->
+  <div class="modal-overlay" id="url-import-modal">
+    <div class="modal" style="max-width: 480px;">
+      <div class="modal-header">
+        <h2>Rezept von URL importieren</h2>
+        <button class="modal-close" onclick="closeUrlImportModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>URL eingeben</label>
+          <input type="url" id="url-import-input" placeholder="https://chefkoch.de/rezepte/...">
+          <p class="form-hint">Unterstützt: Chefkoch, eatsmarter, Kitchen Stories, lecker.de und andere Rezept-Websites mit Schema.org Daten</p>
+        </div>
+        <p id="url-import-error" class="url-import-error" style="display: none;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeUrlImportModal()">Abbrechen</button>
+        <button class="btn btn-blue" id="url-import-load-btn" onclick="importFromURL()">Rezept laden</button>
       </div>
     </div>
   </div>
@@ -1380,6 +1418,343 @@
     document.getElementById('week-plan-modal').addEventListener('click', function(e) {
       if (e.target === this) {
         closeWeekPlan();
+      }
+    });
+
+    // URL Import Functions
+    function openUrlImportModal() {
+      document.getElementById('url-import-modal').classList.add('active');
+      document.getElementById('url-import-input').focus();
+    }
+
+    function closeUrlImportModal() {
+      document.getElementById('url-import-modal').classList.remove('active');
+      document.getElementById('url-import-input').value = '';
+      document.getElementById('url-import-error').textContent = '';
+      document.getElementById('url-import-error').style.display = 'none';
+    }
+
+    async function importFromURL() {
+      const urlInput = document.getElementById('url-import-input');
+      const errorEl = document.getElementById('url-import-error');
+      const loadBtn = document.getElementById('url-import-load-btn');
+      const url = urlInput.value.trim();
+
+      // Validate URL
+      if (!url) {
+        errorEl.textContent = 'Bitte gib eine URL ein.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      try {
+        new URL(url);
+      } catch {
+        errorEl.textContent = 'Bitte gib eine gültige URL ein.';
+        errorEl.style.display = 'block';
+        return;
+      }
+
+      // Show loading state
+      loadBtn.disabled = true;
+      loadBtn.textContent = 'Lädt...';
+      errorEl.style.display = 'none';
+
+      try {
+        // Fetch via CORS proxy
+        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`;
+        const response = await fetch(proxyUrl);
+
+        if (!response.ok) {
+          throw new Error('Fehler beim Abrufen der Seite.');
+        }
+
+        const data = await response.json();
+        const html = data.contents;
+
+        // Parse recipe from HTML
+        const recipe = parseRecipeFromHTML(html, url);
+
+        if (!recipe) {
+          throw new Error('Kein Rezept auf dieser Seite gefunden. Die Seite verwendet möglicherweise kein Schema.org Format.');
+        }
+
+        // Close URL modal
+        closeUrlImportModal();
+
+        // Open recipe modal and fill with data
+        openModal();
+        fillFormWithRecipe(recipe);
+
+        showNotification('Rezept geladen! Bitte überprüfen und speichern.', 'success');
+
+      } catch (error) {
+        console.error('URL Import Fehler:', error);
+        errorEl.textContent = error.message || 'Fehler beim Importieren. Bitte versuche eine andere URL.';
+        errorEl.style.display = 'block';
+      } finally {
+        loadBtn.disabled = false;
+        loadBtn.textContent = 'Rezept laden';
+      }
+    }
+
+    function parseRecipeFromHTML(html, sourceUrl) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Try JSON-LD first (most reliable)
+      const jsonLdScripts = doc.querySelectorAll('script[type="application/ld+json"]');
+
+      for (const script of jsonLdScripts) {
+        try {
+          const data = JSON.parse(script.textContent);
+          const recipe = findRecipeInJsonLd(data);
+          if (recipe) {
+            return mapSchemaToRecipe(recipe, sourceUrl);
+          }
+        } catch (e) {
+          console.warn('JSON-LD parsing error:', e);
+        }
+      }
+
+      // Fallback: Try meta tags and common patterns
+      return parseFallbackRecipe(doc, sourceUrl);
+    }
+
+    function findRecipeInJsonLd(data) {
+      // Handle array of items
+      if (Array.isArray(data)) {
+        for (const item of data) {
+          const recipe = findRecipeInJsonLd(item);
+          if (recipe) return recipe;
+        }
+        return null;
+      }
+
+      // Check if this is a Recipe
+      if (data['@type'] === 'Recipe' ||
+          (Array.isArray(data['@type']) && data['@type'].includes('Recipe'))) {
+        return data;
+      }
+
+      // Check @graph for multiple items
+      if (data['@graph'] && Array.isArray(data['@graph'])) {
+        for (const item of data['@graph']) {
+          const recipe = findRecipeInJsonLd(item);
+          if (recipe) return recipe;
+        }
+      }
+
+      return null;
+    }
+
+    function mapSchemaToRecipe(schema, sourceUrl) {
+      // Parse time (PT30M -> 30 Min, PT1H30M -> 1 Std 30 Min)
+      function parseTime(isoTime) {
+        if (!isoTime) return '';
+        const match = isoTime.match(/PT(?:(\d+)H)?(?:(\d+)M)?/);
+        if (!match) return isoTime;
+
+        const hours = match[1] ? parseInt(match[1]) : 0;
+        const minutes = match[2] ? parseInt(match[2]) : 0;
+
+        if (hours && minutes) return `${hours} Std ${minutes} Min`;
+        if (hours) return `${hours} Std`;
+        if (minutes) return `${minutes} Min`;
+        return '';
+      }
+
+      // Parse yield/portions
+      function parseYield(recipeYield) {
+        if (!recipeYield) return '';
+        if (typeof recipeYield === 'number') return String(recipeYield);
+        if (Array.isArray(recipeYield)) recipeYield = recipeYield[0];
+        // Extract number from string like "4 Portionen" or "4 servings"
+        const match = String(recipeYield).match(/(\d+)/);
+        return match ? match[1] : String(recipeYield);
+      }
+
+      // Parse ingredients (can be array of strings)
+      function parseIngredients(ingredients) {
+        if (!ingredients) return [];
+        if (!Array.isArray(ingredients)) ingredients = [ingredients];
+
+        return ingredients.map(ing => {
+          // Try to split amount from ingredient name
+          const str = String(ing).trim();
+          // Match patterns like "500g Mehl", "2 EL Zucker", "1/2 Tasse Milch"
+          const match = str.match(/^([\d½¼¾⅓⅔\/\s,.-]+\s*(?:g|kg|ml|l|EL|TL|Tasse|Stück|Prise|Packung|Dose|Bund|Zehe|Scheibe)?)\s+(.+)$/i);
+
+          if (match) {
+            return { menge: match[1].trim(), name: match[2].trim() };
+          }
+          return { menge: '', name: str };
+        });
+      }
+
+      // Parse instructions (can be array of strings or HowToStep objects)
+      function parseInstructions(instructions) {
+        if (!instructions) return [];
+        if (!Array.isArray(instructions)) instructions = [instructions];
+
+        return instructions.map(step => {
+          if (typeof step === 'string') return step.trim();
+          if (step.text) return step.text.trim();
+          if (step.name) return step.name.trim();
+          return String(step).trim();
+        }).filter(s => s);
+      }
+
+      // Get image URL
+      function parseImage(image) {
+        if (!image) return '';
+        if (typeof image === 'string') return image;
+        if (Array.isArray(image)) return parseImage(image[0]);
+        if (image.url) return image.url;
+        if (image['@id']) return image['@id'];
+        return '';
+      }
+
+      // Map category
+      function parseCategory(category) {
+        if (!category) return 'Hauptspeisen';
+        const cat = String(category).toLowerCase();
+        if (cat.includes('vorspeise') || cat.includes('appetizer') || cat.includes('starter') || cat.includes('salat')) {
+          return 'Vorspeisen';
+        }
+        if (cat.includes('dessert') || cat.includes('nachspeise') || cat.includes('kuchen') || cat.includes('süß') || cat.includes('sweet')) {
+          return 'Desserts';
+        }
+        return 'Hauptspeisen';
+      }
+
+      const time = parseTime(schema.totalTime || schema.prepTime || schema.cookTime);
+
+      return {
+        title: schema.name || 'Unbekanntes Rezept',
+        kategorie: parseCategory(schema.recipeCategory),
+        bild: parseImage(schema.image),
+        zeit: time,
+        portionen: parseYield(schema.recipeYield),
+        beschreibung: schema.description || '',
+        zutaten: parseIngredients(schema.recipeIngredient),
+        zubereitung: parseInstructions(schema.recipeInstructions),
+        tipps: '',
+        quelle: sourceUrl
+      };
+    }
+
+    function parseFallbackRecipe(doc, sourceUrl) {
+      // Try to extract basic info from meta tags
+      const title = doc.querySelector('meta[property="og:title"]')?.content ||
+                    doc.querySelector('title')?.textContent ||
+                    '';
+
+      const image = doc.querySelector('meta[property="og:image"]')?.content || '';
+      const description = doc.querySelector('meta[property="og:description"]')?.content ||
+                          doc.querySelector('meta[name="description"]')?.content ||
+                          '';
+
+      // Try common CSS selectors for recipe sites
+      const ingredientSelectors = [
+        '.recipe-ingredients li',
+        '.ingredients li',
+        '.ingredient-list li',
+        '[itemprop="recipeIngredient"]',
+        '.wprm-recipe-ingredient'
+      ];
+
+      const instructionSelectors = [
+        '.recipe-instructions li',
+        '.instructions li',
+        '.preparation li',
+        '[itemprop="recipeInstructions"]',
+        '.wprm-recipe-instruction'
+      ];
+
+      let zutaten = [];
+      for (const selector of ingredientSelectors) {
+        const elements = doc.querySelectorAll(selector);
+        if (elements.length > 0) {
+          zutaten = Array.from(elements).map(el => ({
+            menge: '',
+            name: el.textContent.trim()
+          }));
+          break;
+        }
+      }
+
+      let zubereitung = [];
+      for (const selector of instructionSelectors) {
+        const elements = doc.querySelectorAll(selector);
+        if (elements.length > 0) {
+          zubereitung = Array.from(elements).map(el => el.textContent.trim());
+          break;
+        }
+      }
+
+      // Only return if we found something useful
+      if (!title && zutaten.length === 0) {
+        return null;
+      }
+
+      return {
+        title: title.replace(/\s*[-|].*$/, '').trim() || 'Importiertes Rezept',
+        kategorie: 'Hauptspeisen',
+        bild: image,
+        zeit: '',
+        portionen: '',
+        beschreibung: description,
+        zutaten: zutaten,
+        zubereitung: zubereitung,
+        tipps: '',
+        quelle: sourceUrl
+      };
+    }
+
+    function fillFormWithRecipe(recipe) {
+      document.getElementById('form-title').value = recipe.title || '';
+      document.getElementById('form-kategorie').value = recipe.kategorie || 'Hauptspeisen';
+      document.getElementById('form-zeit').value = recipe.zeit || '';
+      document.getElementById('form-portionen').value = recipe.portionen || '';
+      document.getElementById('form-beschreibung').value = recipe.beschreibung || '';
+      document.getElementById('form-bild').value = recipe.bild || '';
+      document.getElementById('form-tipps').value = recipe.tipps || '';
+
+      // Fill ingredients
+      const zutatenList = document.getElementById('zutaten-list');
+      if (recipe.zutaten && recipe.zutaten.length > 0) {
+        zutatenList.innerHTML = recipe.zutaten.map(z => `
+          <div class="dynamic-row">
+            <input type="text" placeholder="Menge" class="zutat-menge" value="${escapeHtml(z.menge || '')}">
+            <input type="text" placeholder="Zutat" class="zutat-name" value="${escapeHtml(z.name || '')}">
+            <button type="button" class="remove-btn" onclick="removeRow(this)">&times;</button>
+          </div>
+        `).join('');
+      }
+
+      // Fill steps
+      const zubereitungList = document.getElementById('zubereitung-list');
+      if (recipe.zubereitung && recipe.zubereitung.length > 0) {
+        zubereitungList.innerHTML = recipe.zubereitung.map((s, i) => `
+          <div class="dynamic-row">
+            <input type="text" placeholder="Schritt ${i+1}..." class="schritt" value="${escapeHtml(s)}">
+            <button type="button" class="remove-btn" onclick="removeRow(this)">&times;</button>
+          </div>
+        `).join('');
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/"/g, '&quot;');
+    }
+
+    // Close URL import modal on overlay click
+    document.getElementById('url-import-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeUrlImportModal();
       }
     });
 
